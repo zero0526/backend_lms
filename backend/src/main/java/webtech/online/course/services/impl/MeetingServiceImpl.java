@@ -275,7 +275,8 @@ public class MeetingServiceImpl implements MeetingService {
                 .orElseThrow(() -> new BaseError("Not found the meeting has id=%d".formatted(id)));
     }
 
-    private void uploadToYoutube(Long recordingId, String fileUrl, String roomName, Long sessionId,
+    @Transactional
+    public void uploadToYoutube(Long recordingId, String fileUrl, String roomName, Long sessionId,
             long durationSeconds) {
         File videoFile = null;
         try {
@@ -288,6 +289,11 @@ public class MeetingServiceImpl implements MeetingService {
             }
 
             File localFile = new File(actualPath);
+            // Ensure parent directory exists for local environments
+            if (localFile.getParentFile() != null && !localFile.getParentFile().exists()) {
+                localFile.getParentFile().mkdirs();
+            }
+
             if (localFile.exists()) {
                 videoFile = localFile;
             } else {

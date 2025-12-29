@@ -42,6 +42,7 @@ public class UserServiceImpl implements UserService {
     private final FrontendConfig frontendConfig;
 
     @Override
+    @Transactional
     public User registerUser(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email has already existed");
@@ -67,6 +68,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User firstOAuth(OAuth2UserInfo oAuth2UserInfo, String roleName, String providerId) {
         if (userRepository.findByEmail(oAuth2UserInfo.getEmail()).isPresent()) {
             throw new RuntimeException("Email has already existed");
