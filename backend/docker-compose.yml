@@ -1,0 +1,94 @@
+services:
+  redis:
+    image: redis:8.2.1
+    container_name: redis_course
+    restart: always
+    ports:
+      - "${REDIS_PORT:-6380}:6379"
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - ./data/redis:/data
+
+  postgres:
+    image: postgres:16
+    container_name: postgres_course
+    restart: always
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+  app:
+    image: myapp
+    build: .
+    container_name: course_backend
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      ES_URIS: ${ES_URIS}
+      ES_USERNAME: ${ES_USERNAME}
+      ES_PASSWORD: ${ES_PASSWORD}
+      LIVEKIT_URL: http://livekit:7880
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      GOOGLE_DRIVE_FOLDER_ID: ${GOOGLE_DRIVE_FOLDER_ID}
+      YOUTUBE_CLIENT_ID: ${YOUTUBE_CLIENT_ID}
+      YOUTUBE_CLIENT_SECRET: ${YOUTUBE_CLIENT_SECRET}
+      OAUTH_GOOGLE_CLIENT_ID: ${OAUTH_GOOGLE_CLIENT_ID}
+      OAUTH_GOOGLE_CLIENT_SECRET: ${OAUTH_GOOGLE_CLIENT_SECRET}
+      OAUTH_GITHUB_CLIENT_ID: ${OAUTH_GITHUB_CLIENT_ID}
+      OAUTH_GITHUB_CLIENT_SECRET: ${OAUTH_GITHUB_CLIENT_SECRET}
+    ports:
+      - "${PORT:-8081}:8081"
+      - "8888:8888" # Dùng để nhận callback từ Google OAuth khi chạy local
+    volumes:
+      - ./ggCredentials:/app/ggCredentials
+      - ./credentials:/app/credentials
+      - ./recordings:/app/recordings
+    depends_on:
+      - postgres
+      - redis
+
+  livekit:
+    image: livekit/livekit-server:latest
+    command: --config /etc/livekit.yaml
+    volumes:
+      - ./Infras/livekit.yaml:/etc/livekit.yaml
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+      - "52000-52100:52000-52100/udp"
+    depends_on:
+      - redis
+    environment:
+      LIVEKIT_KEYS: "${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}"
+      LIVEKIT_WEBHOOK_API_KEY: "${LIVEKIT_API_KEY}"
+      LIVEKIT_WEBHOOK_URLS: '["http://host.docker.internal:8081/api/webhook"]'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  egress:
+    image: livekit/egress:latest
+    environment:
+      - EGRESS_CONFIG_FILE=/etc/egress.yaml
+      - LIVEKIT_API_KEY=${LIVEKIT_API_KEY}
+      - LIVEKIT_API_SECRET=${LIVEKIT_API_SECRET}
+      - LIVEKIT_WS_URL=ws://livekit:7880
+      - REDIS_URL=redis://redis:6379
+      - EGRESS_SESSION_LIMITS_DISABLE_START_SIGNAL=true
+    volumes:
+      - ./Infras/egress.yaml:/etc/egress.yaml
+      - ./recordings:/out
+    depends_on:
+      - livekit
+      - redis

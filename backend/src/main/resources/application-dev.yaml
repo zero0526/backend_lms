@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5434/mydatabase
+    username: root
+    password: ${DB_PASSWORD:123}
+    driver-class-name: org.postgresql.Driver
+  redis:
+    host: localhost
+    post: 6380
+  elasticsearch:
+    uris: ${ES_URIS:https://my-elasticsearch-project-f3c1ba.es.us-central1.gcp.elastic.cloud:443}
+    username: elastic
+    password: ${ES_PASSWORD:M2JXOFpac0IyTUZfemVjTnMtRGU6RUh4UHNDQkw1SGthQXJ1UTNreTQtUQ==}
+    connection-timeout: 5s
+    socket-timeout: 3s
+
+frontend:
+  uri: ${FRONTEND_URI:http://localhost:5173}
+
+livekit:
+  api:
+    key: ${LIVEKIT_API_KEY:devkey}
+    secret: ${LIVEKIT_API_SECRET:9b25f27e04740eb052537dd8896c768edff8ee6a7dfa73df6aeb1b90371526f837db4d6b6bcdedcc87624012a476918e2f3718b13b3e51bead4ac033c195d84e}
+  url: ${LIVEKIT_URL:http://localhost:7880}
