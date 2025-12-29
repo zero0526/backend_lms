@@ -33,13 +33,22 @@ public class LiveKitServiceImpl implements LiveKitService {
     @PostConstruct
     @SuppressWarnings("deprecation")
     public void init() {
+        String url = liveKitConfig.getUrl();
+        if (url != null) {
+            if (url.startsWith("wss://")) {
+                url = url.replace("wss://", "https://");
+            } else if (url.startsWith("ws://")) {
+                url = url.replace("ws://", "http://");
+            }
+        }
+
         this.roomClient = RoomServiceClient.create(
-                liveKitConfig.getUrl(),
+                url,
                 liveKitConfig.getApiKey(),
                 liveKitConfig.getApiSecret());
 
         this.egressClient = EgressServiceClient.create(
-                liveKitConfig.getUrl(),
+                url,
                 liveKitConfig.getApiKey(),
                 liveKitConfig.getApiSecret());
 
