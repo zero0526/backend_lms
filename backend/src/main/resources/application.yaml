@@ -20,6 +20,7 @@ spring:
     password: ${MAIL_PASSWORD}
     properties:
       mail:
+        debug: true
         smtp:
           auth: true
           starttls:
@@ -57,6 +58,7 @@ scheduler:
 logging:
   level:
     root: info
+    org.springframework.mail: DEBUG
   webtech:
     online:
       course: DEBUG
