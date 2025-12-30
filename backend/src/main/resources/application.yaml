@@ -15,19 +15,16 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   mail:
     host: ${MAIL_HOST:sandbox.smtp.mailtrap.io}
-    port: ${MAIL_PORT:465}
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_PASSWORD:}
+    port: ${MAIL_PORT:2525}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
           auth: true
-          ssl:
-            enable: true
-            trust: "*"
           starttls:
-            enable: false
-            required: false
+            enable: true
+            required: true
 
   servlet:
     multipart:
