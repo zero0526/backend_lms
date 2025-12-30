@@ -43,7 +43,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
                 if (roleName == null)
                         roleName = "ROLE_STUDENT";
-                else if(!roleName.contains("ROLE_"))
+                else if(!roleName.startsWith("ROLE_"))
                         roleName = "ROLE_%s".formatted(roleName);
                 UserDetails userDetails;
                 User newUser;
