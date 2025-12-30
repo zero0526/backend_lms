@@ -61,6 +61,9 @@ public class EmailServiceImpl implements EmailService {
             helper.setSubject(subject);
             helper.setText(htmlContent, true);
 
+            if (fromEmail == null || fromEmail.isEmpty()) {
+                log.warn("Email sender 'fromEmail' is not configured!");
+            }
             mailSender.send(message);
             log.info("Email sent successfully to {}", to);
         } catch (MessagingException e) {

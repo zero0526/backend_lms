@@ -1,7 +1,7 @@
 -- liquibase formatted sql
 
 -- changeset antigravity:002-insert-sample-data
--- validCheckSum: 9:c55b84ede4731b92873cd3cfd0d1df4a
+-- validCheckSum: 9:219c4537cab364b2fa3a136da549fc3b
 INSERT INTO oauth_providers
 (name, client_id, client_secret_key, redirect_uri, auth_url, token_url, userinfo_url, scopes)
 VALUES
