@@ -13,6 +13,18 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  mail:
+    host: ${MAIL_HOST:sandbox.smtp.mailtrap.io}
+    port: ${MAIL_PORT:2525}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   servlet:
     multipart:
       max-file-size: 2GB
@@ -26,16 +38,12 @@ spring:
       oauth_github_client_id: ${OAUTH_GITHUB_CLIENT_ID:}
       oauth_github_client_secret: ${OAUTH_GITHUB_CLIENT_SECRET:}
 
-resend:
-  api:
-    key: ${RESEND_API_KEY:}
-  from: ${RESEND_FROM_EMAIL:onboarding@resend.dev}
-
 lucene:
   index_dir: lucene-course-index
 
 server:
   port: ${PORT:8081}
+  forward-headers-strategy: native
   tomcat:
     max-part-count: 100000
 app:
